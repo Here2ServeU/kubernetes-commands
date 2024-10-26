@@ -2,32 +2,24 @@
 **These commands will enable you to manage the Kubernetes Cluster.**
 
 ### Cluster Management 
-* ***kbectl version***        # Check the version of kubectl
+* ***kubectl version***        # Check the version of kubectl
 * ***kubectl cluster-info***  # Get the cluster information
 * ***kubectl get nodes*** # Get the nodes in the cluster
 * ***kubectl get pods*** # Get the pods in the cluster
-
-kubectl get services # Get the services in the cluster
+* ***kubectl get services*** # Get the services in the cluster
 
 # Namespace Management
-kubectl get namespaces # Get the namespaces in the cluster
-
-kubectl create namespace mynamespace # Create a namespace
-
-kubectl delete namespace mynamespace # Delete a namespace
-
-kubectl get pods -n mynamespace # Get the pods in a namespace
+* ***kubectl get namespaces*** # Get the namespaces in the cluster
+* ***kubectl create namespace mynamespace*** # Create a namespace
+* ***kubectl delete namespace mynamespace*** # Delete a namespace
+* ***kubectl get pods -n mynamespace*** # Get the pods in a namespace
 
 # Pod Management
-kubectl get pods # Get the pods in the cluster
-
-kubectl describe pod mypod # Describe a pod
-
-kubectl logs mypod # Get the logs of a pod
-
-kubectl exec -it mypod -- /bin/bash # Execute a command in a pod
-
-kubectl delete pod mypod # Delete a pod
+* ***kubectl get pods*** # Get the pods in the cluster
+* ***kubectl describe pod mypod*** # Describe a pod
+* ***kubectl logs mypod*** # Get the logs of a pod
+* ***kubectl exec -it mypod -- /bin/bash*** # Execute a command in a pod
+* ***kubectl delete pod mypod*** # Delete a pod
 
 # Deployment Management
 kubectl get deployments # Get the deployments in the cluster
