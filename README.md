@@ -7,6 +7,8 @@
 * ***kubectl get nodes*** # Get the nodes in the cluster
 * ***kubectl get pods*** # Get the pods in the cluster
 * ***kubectl get services*** # Get the services in the cluster
+* ***kubectl cordon/uncordon <node>*** # To mark node as unschedulable/schedulable
+* ***kubectl drain <node>*** # Safely evict all pods from a node
 
 ### Namespace Management
 * ***kubectl get namespaces*** # Get the namespaces in the cluster
@@ -46,6 +48,7 @@
 * ***kubectl get secrets*** # Get the secrets in the cluster
 * ***kubectl describe secret mysecret*** # Describe a secret
 * ***kubectl delete secret mysecret*** # Delete a secret
+* ***kubectl create secret generic <secret-name> --from-literal+<key>=<value>*** # Create a secret
 
 ### Role Management
 * ***kubectl get roles*** # Get the roles in the cluster
@@ -138,6 +141,7 @@ kubectl delete resourcequota myresourcequota # Delete a resourcequota
 * ***kubectl delete clusterrole myclusterrole*** # Delete a clusterrole
 
 ### ClusterRoleBinding Management
+* ***kubectl create rolebinding <binding-name> --role-<role-name> --user=<user>*** # Bind a role to a user
 * ***kubectl get clusterrolebindings*** # Get the clusterrolebindings in the cluster
 * ***kubectl describe clusterrolebinding myclusterrolebinding*** # Describe a clusterrolebinding
 * ***kubectl delete clusterrolebinding myclusterrolebinding*** # Delete a clusterrolebinding
@@ -184,10 +188,12 @@ kubectl delete resourcequota myresourcequota # Delete a resourcequota
 * ***kubectl krew install get-all-namespaces*** # Install the get-all-namespaces plugin
 
 ### Debugging 
+* ***kubectl logs <pod-name>*** # To view logs from a pod
 * ***kubectl get events*** # Get the events in the cluster
 * ***kubectl get logs mypod*** # Get the logs of a pod
 * ***kubectl exec -it mypod -- /bin/bash*** # Execute a command in a pod
 * ***kubectl describe pod mypod*** # Describe a pod
 * ***kubectl get pods --all-namespaces*** # Get the pods in all namespaces
 * ***kubectl get pods -n mynamespace*** # Get the pods in a namespace
+* ***kubectl port-forward <pod-name> <local-port>:<container-port>*** # To forward port from Pod to Localhost. 
 
