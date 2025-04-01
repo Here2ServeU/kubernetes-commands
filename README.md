@@ -29,8 +29,9 @@ Each template is written for real-world use and ready for you to customize, appl
 
 
 ---
+## Part 1: Foundational and Essential kubectl Commands
 
-## Cluster Management
+### Cluster Management
 
 **Check the version of kubectl**
 ```bash
@@ -81,7 +82,7 @@ NAME         TYPE        CLUSTER-IP     PORT(S)   AGE
 kubernetes   ClusterIP   10.96.0.1      443/TCP   3d
 ```
 
-## Namespace Management
+### Namespace Management
 
 **Get namespaces**
 ```bash
@@ -122,7 +123,7 @@ NAME         READY   STATUS    RESTARTS   AGE
 app-pod      1/1     Running   0          2m
 ```
 
-## Pod Management
+### Pod Management
 
 **Get pods**
 ```bash
@@ -171,7 +172,7 @@ kubectl delete pod mypod
 pod "mypod" deleted
 ```
 
-## Deployment Management
+### Deployment Management
 
 **Get deployments**
 ```bash
@@ -212,7 +213,7 @@ kubectl delete deployment mydeployment
 deployment.apps "mydeployment" deleted
 ```
 
-## Service Management
+### Service Management
 
 **Get services**
 ```bash
@@ -244,7 +245,7 @@ kubectl delete service myservice
 service "myservice" deleted
 ```
 
-## YAML Template: Deployment Manifest
+### YAML Template: Deployment Manifest
 **Defines a Deployment resource for managing replicas of a containerized application.**
 ```bash
 kubectl apply -f deployment.yaml
@@ -276,7 +277,7 @@ spec:
         - containerPort: 80
 ```
 
-## YAML Template: Service Manifest (ClusterIP)
+### YAML Template: Service Manifest (ClusterIP)
 **Exposes a Deployment within the cluster using ClusterIP.**
 ```bash
 kubectl apply -f service.yaml
@@ -300,6 +301,8 @@ spec:
       targetPort: 80
   type: ClusterIP
 ```
+
+---
 
 ## Part 2: GitOps, CI/CD & Kustomize Templates
 
