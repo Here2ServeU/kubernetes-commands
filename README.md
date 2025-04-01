@@ -1,8 +1,6 @@
 # Mastering Kubernetes: kubectl Commands, YAML Templates & GitOps Workflows
 
-This guide includes over 50 essential `kubectl` commands grouped by category, realistic outputs, and reusable YAML templates for Helm, GitOps, and CI/CD workflows.
-
----
+This guide includes over 50 essential `kubectl` commands grouped by category, realistic outputs, and reusable YAML templates for Helm, GitOps, CI/CD, and Kustomize workflows.
 
 ## Introduction
 
@@ -33,6 +31,7 @@ Each template is written for real-world use and ready for you to customize, appl
 ---
 
 ## Cluster Management
+
 **Check the version of kubectl**
 ```bash
 kubectl version
@@ -83,6 +82,7 @@ kubernetes   ClusterIP   10.96.0.1      443/TCP   3d
 ```
 
 ## Namespace Management
+
 **Get namespaces**
 ```bash
 kubectl get namespaces
@@ -123,6 +123,7 @@ app-pod      1/1     Running   0          2m
 ```
 
 ## Pod Management
+
 **Get pods**
 ```bash
 kubectl get pods
@@ -170,6 +171,79 @@ kubectl delete pod mypod
 pod "mypod" deleted
 ```
 
+## Deployment Management
+
+**Get deployments**
+```bash
+kubectl get deployments
+```
+**Output:**
+```text
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+mydeployment   3/3     3            3           5m
+```
+
+**Describe a deployment**
+```bash
+kubectl describe deployment mydeployment
+```
+**Output:**
+```text
+Name: mydeployment
+Namespace: default
+Replicas: 3 desired | 3 updated | 3 available
+```
+
+**Scale a deployment**
+```bash
+kubectl scale deployment mydeployment --replicas=3
+```
+**Output:**
+```text
+deployment.apps/mydeployment scaled
+```
+
+**Delete a deployment**
+```bash
+kubectl delete deployment mydeployment
+```
+**Output:**
+```text
+deployment.apps "mydeployment" deleted
+```
+
+## Service Management
+
+**Get services**
+```bash
+kubectl get services
+```
+**Output:**
+```text
+NAME         TYPE        CLUSTER-IP     PORT(S)   AGE
+myservice    ClusterIP   10.96.0.2      80/TCP    1h
+```
+
+**Describe a service**
+```bash
+kubectl describe service myservice
+```
+**Output:**
+```text
+Name: myservice
+Type: ClusterIP
+IP: 10.96.0.2
+```
+
+**Delete a service**
+```bash
+kubectl delete service myservice
+```
+**Output:**
+```text
+service "myservice" deleted
+```
+
 ## YAML Template: Deployment Manifest
 **Defines a Deployment resource for managing replicas of a containerized application.**
 ```bash
@@ -200,6 +274,205 @@ spec:
         image: nginx:latest
         ports:
         - containerPort: 80
+```
+
+## YAML Template: Service Manifest (ClusterIP)
+**Exposes a Deployment within the cluster using ClusterIP.**
+```bash
+kubectl apply -f service.yaml
+```
+**Output:**
+```text
+service/nginx-service created
+```
+**YAML:**
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+```
+
+## Part 2: GitOps, CI/CD & Kustomize Templates
+
+This section includes YAML templates to implement GitOps workflows with ArgoCD and FluxCD, CI/CD pipelines using GitHub Actions, and Kustomize overlays for managing environments.
+
+### Helm Chart Deployment
+**Use Helm to install a chart for NGINX ingress controller.**
+```bash
+helm install nginx-ingress ingress-nginx/ingress-nginx
+```
+**Output:**
+```text
+NAME: nginx-ingress
+LAST DEPLOYED: today
+NAMESPACE: default
+STATUS: deployed
+```
+**YAML:**
+```yaml
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install nginx-ingress ingress-nginx/ingress-nginx
+```
+
+### GitOps Deployment Example (ArgoCD Application)
+**Define an ArgoCD Application manifest to sync with a Git repo for automated deployment.**
+```bash
+kubectl apply -f argocd-app.yaml
+```
+**Output:**
+```text
+application.argoproj.io/myapp created
+```
+**YAML:**
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/myorg/myapp-k8s
+    targetRevision: HEAD
+    path: .
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+```
+
+### EKS Cluster IAM Role Mapping
+**Map an IAM user or role to Kubernetes RBAC using aws-auth ConfigMap.**
+```bash
+kubectl edit configmap aws-auth -n kube-system
+```
+**Output:**
+```text
+configmap/aws-auth edited
+```
+**YAML:**
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::111122223333:role/eksNodeRole
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
+```
+
+### FluxCD GitRepository Resource
+**Defines a Git repository source for syncing with Kubernetes.**
+```bash
+kubectl apply -f flux-gitrepo.yaml
+```
+**Output:**
+```text
+gitrepository.source.toolkit.fluxcd.io/my-repo created
+```
+**YAML:**
+```yaml
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: my-repo
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  url: https://github.com/your-org/your-repo
+  ref:
+    branch: main
+```
+
+### FluxCD Kustomization Resource
+**Syncs and applies Kubernetes manifests from a Git repo.**
+```bash
+kubectl apply -f flux-kustomization.yaml
+```
+**Output:**
+```text
+kustomization.kustomize.toolkit.fluxcd.io/my-app created
+```
+**YAML:**
+```yaml
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: my-app
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  path: ./manifests
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: my-repo
+  targetNamespace: default
+```
+
+### Kustomize Overlay Example
+**Base + overlay structure to manage multiple environments.**
+```bash
+kubectl apply -k overlays/dev
+```
+**Output:**
+```text
+deployment.apps/my-app configured
+```
+**YAML:**
+```yaml
+# overlays/dev/kustomization.yaml
+resources:
+  - ../../base
+patchesStrategicMerge:
+  - patch-deployment.yaml
+```
+
+### GitHub Actions Kubernetes Deploy Workflow
+**CI/CD pipeline to build, push Docker image, and deploy to Kubernetes.**
+```bash
+git push triggers GitHub Actions
+```
+**Output:**
+```text
+✔ Deployed to Kubernetes cluster via GitHub Actions
+```
+**YAML:**
+```yaml
+# .github/workflows/deploy.yml
+name: CI/CD Deploy to Kubernetes
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Kubeconfig
+      run: echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+    - name: Deploy to K8s
+      run: kubectl apply -f k8s/
 ```
 
 ---
